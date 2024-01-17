@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OGRVRTDataSource>
+    <OGRVRTLayer name="datos geometricos excel-datos geometricos">
+        <SrcDataSource relativeToVRT="1">datos geometricos excel.xlsx</SrcDataSource>
+        <!--Header=False-->
+        <SrcLayer>datos geometricos</SrcLayer>
+        <Field name="hex_id" src="hex_id" type="String"/>
+        <Field name="geometria" src="geometria" type="String"/>
+        <GeometryType>wkbPoint</GeometryType>
+        <LayerSRS>EPSG:4326</LayerSRS>
+        <GeometryField encoding="PointFromColumns" x="longitud" y="latitud"/>
+    </OGRVRTLayer>
+</OGRVRTDataSource>
