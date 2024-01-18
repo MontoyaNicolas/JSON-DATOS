@@ -2,24 +2,40 @@ import pandas as pd
 import json
 
 # Cargar el archivo de Excel
-excel_file_path = 'D:/DATOS PROYECTADOS/datosjson.xlsx'  # Asegúrate de que la ruta y el nombre del archivo sean correctos
+excel_file_path = 'D:/DATOS PROYECTADOS/datosgeometia.xlsx'
 
 # Leer el archivo Excel
-df = pd.read_excel(excel_file_path, sheet_name='Sheet1')  # Cambia 'Sheet1' si tu hoja tiene otro nombre
+df = pd.read_excel(excel_file_path)
 
-# Convertir la columna de geometría a objetos JSON válidos
-df['geometry'] = df['geometria'].apply(lambda x: {"type": "Polygon", "coordinates": [json.loads(x.replace("'", "\""))]})
+# Convertir los strings de la columna 'geometria' a listas de Python usando json.loads
+df['geometry'] = df['geometria'].apply(lambda x: json.loads(x))
 
-# Crear un nuevo DataFrame para el JSON con las columnas necesarias
-json_df = df[['hex_id', 'latitud', 'longitud', 'geometry']]
+# Crear las features GeoJSON
+features = []
+for _, row in df.iterrows():
+    feature = {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": row['geometry']
+        },
+        
+    }
+    features.append(feature)
 
-# Convertir el DataFrame a JSON
-json_result = json_df.to_json(orient='records')
+# Crear el objeto GeoJSON completo
+geojson = {
+    "type": "FeatureCollection",
+    "features": features
+}
 
-# Guardar el JSON en un archivo
-json_file_path = 'D:/DATOS PROYECTADOS/archivo.json'  # Cambia el nombre del archivo si es necesario
+# Convertir el objeto GeoJSON a una cadena de texto JSON
+geojson_str = json.dumps(geojson, indent=2, ensure_ascii=False)
+
+# Guardar el JSON en un archivo GeoJSON
+json_file_path = 'D:/DATOS PROYECTADOS/datos_geometricos_completos.geojson'
 with open(json_file_path, 'w', encoding='utf-8') as file:
-    file.write(json_result)
+    file.write(geojson_str)
 
-print(f'Archivo JSON guardado en: {json_file_path}')
-
+print('Archivo GeoJSON guardado en:', json_file_path)
